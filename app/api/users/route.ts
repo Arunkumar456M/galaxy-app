@@ -3,12 +3,12 @@ import { auth } from "@clerk/nextjs/server";
 import connectDB from "@/lib/mongodb";
 import User from "@/lib/models/user";
 
-// ✅ GET USERS
+// 🔹 GET USERS
 export async function GET() {
   try {
     await connectDB();
 
-    const { userId } = await auth();
+    const { userId } = await auth(); // ✅ IMPORTANT FIX
 
     if (!userId) {
       return NextResponse.json([], { status: 200 });
@@ -25,12 +25,12 @@ export async function GET() {
   }
 }
 
-// ✅ CREATE USER
+// 🔹 CREATE USER
 export async function POST(request: Request) {
   try {
     await connectDB();
 
-    const { userId } = await auth();
+    const { userId } = await auth(); // ✅ IMPORTANT FIX
 
     if (!userId) {
       return NextResponse.json(
@@ -62,12 +62,12 @@ export async function POST(request: Request) {
   }
 }
 
-// ✅ DELETE USER
+// 🔹 DELETE USER
 export async function DELETE(request: Request) {
   try {
     await connectDB();
 
-    const { userId } = await auth();
+    const { userId } = await auth(); // ✅ IMPORTANT FIX
 
     if (!userId) {
       return NextResponse.json(
