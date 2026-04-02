@@ -6,7 +6,7 @@ import User from "@/lib/models/user";
 export async function GET() {
   await connectDB();
 
-  const { userId } = auth();
+  const { userId } = await auth(); // ✅ FIXED
 
   if (!userId) {
     return NextResponse.json([]);
@@ -20,7 +20,7 @@ export async function GET() {
 export async function POST(request: Request) {
   await connectDB();
 
-  const { userId } = auth();
+  const { userId } = await auth(); // ✅ FIXED
 
   if (!userId) {
     return NextResponse.json(
@@ -49,7 +49,7 @@ export async function POST(request: Request) {
 export async function DELETE(request: Request) {
   await connectDB();
 
-  const { userId } = auth();
+  const { userId } = await auth(); // ✅ FIXED
 
   if (!userId) {
     return NextResponse.json(
