@@ -1,20 +1,17 @@
 import mongoose from "mongoose";
 
-const MONGO_URI = process.env.MONGODB_URI!;
+const UserSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  userId: {
+    type: String,
+    required: true,
+  },
+});
 
-if (!MONGO_URI) {
-  throw new Error("Please add MONGODB_URI in .env.local");
-}
+const User =
+  mongoose.models.User || mongoose.model("User", UserSchema);
 
-let cached = (global as any).mongoose || { conn: null, promise: null };
-
-export default async function connectDB() {
-  if (cached.conn) return cached.conn;
-
-  if (!cached.promise) {
-    cached.promise = mongoose.connect(MONGO_URI).then((mongoose) => mongoose);
-  }
-
-  cached.conn = await cached.promise;
-  return cached.conn;
-}
+export default User;

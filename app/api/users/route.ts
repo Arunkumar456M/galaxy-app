@@ -5,34 +5,66 @@ import User from "@/lib/models/user";
 
 export async function GET() {
   await connectDB();
-  const users = await User.find();
+
+  const { userId } = auth();
+
+  if (!userId) {
+    return NextResponse.json([]);
+  }
+
+  const users = await User.find({ userId });
+
   return NextResponse.json(users);
 }
 
 export async function POST(request: Request) {
-  const { userId } = auth();
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
   await connectDB();
-  const { name } = await request.json();
-  const newUser = new User({ name });
-  await newUser.save();
-  return NextResponse.json(newUser);
-} 
 
-export async function DELETE(request: Request) {
   const { userId } = auth();
+
   if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json(
+      { error: "Unauthorized" },
+      { status: 401 }
+    );
   }
-  await connectDB();
-  const { searchParams } = new URL(request.url);
-  const id = searchParams.get("id");
-  if (!id) {
-    return NextResponse.json({ error: "User ID is required" }, { status: 400 });
+
+  const { name } = await request.json();
+
+  if (!name) {
+    return NextResponse.json(
+      { error: "Name is required" },
+      { status: 400 }
+    );
   }
-  await User.findByIdAndDelete(id);
-  return NextResponse.json({ message: "User deleted" });
+
+  const newUser = await User.create({
+    name,
+    userId,
+  });
+
+  return NextResponse.json(newUser);
 }
 
+export async function DELETE(request: Request) {
+  await connectDB();
+
+  const { userId } = auth();
+
+  if (!userId) {
+    return NextResponse.json(
+      { error: "Unauthorized" },
+      { status: 401 }
+    );
+  }
+
+  const { searchParams } = new URL(request.url);
+  const id = searchParams.get("id");
+
+  await User.findOneAndDelete({
+    _id: id,
+    userId,
+  });
+
+  return NextResponse.json({ success: true });
+}
